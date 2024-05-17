@@ -13,3 +13,6 @@ async function main() {
     console.log("Error from main:", error)
   }
 }
+
+
+main();
