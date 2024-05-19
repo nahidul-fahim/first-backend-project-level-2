@@ -6,69 +6,87 @@ import {
   UserName,
 } from "./student.interface";
 
-
 // userName schema
 const userNameSchema = new Schema<UserName>({
   firstName: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true, // this will remove unnecessary space from beginning and ending of name
+    required: [true, 'First name is required'],
+    // custom made validation function
+    validate: {
+      validator: function (value: string) {
+        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1) //Nahid
+        return firstNameStr === value; // if value is same as firstNameStr format, then it will return. Otherwise, it won't.
+      },
+      message: '{VALUE} is not in capitalized format'
+    }
   },
   middleName: {
     type: String,
+    trim: true,
   },
   lastName: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Last name is required'],
   },
 });
-
 
 // guardian schema
 const guardianSchema = new Schema<Guardian>({
   fatherName: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Father\'s name is required'],
   },
   fatherOccupation: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Father\'s occupation is required'],
   },
   fatherContactNo: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Father\'s contact number is required'],
   },
   motherName: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Mother\'s name is required'],
   },
   motherOccupation: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Mother\'s occupation is required'],
   },
   motherContactNo: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Mother\'s contact number is required'],
   },
 });
-
 
 // local guardian schema
 const localGuardianSchema = new Schema<LocalGuardian>({
   name: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Local guardian\'s name is required'],
   },
   occupation: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Local guardian\'s occupation is required'],
   },
   contactNo: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Local guardian\'s contact number is required'],
   },
   address: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Local guardian\'s address is required'],
   },
 });
 
@@ -77,57 +95,77 @@ const studentSchema = new Schema<Student>({
   id: {
     type: String,
     unique: true,
-    required: true,
+    trim: true,
+    required: [true, 'Student ID is required'],
   },
   name: {
     type: userNameSchema,
-    required: true,
+    required: [true, 'Name is required'],
   },
   gender: {
     type: String,
-    enum: ["male", "female"],
-    required: true,
+    enum: {
+      values: ["male", "female"],
+      message: '{VALUE} is not a valid gender',
+    },
+    required: [true, 'Gender is required'],
   },
-  dateOfBirth: { type: String },
+  dateOfBirth: {
+    type: String,
+    trim: true,
+  },
   email: {
     type: String,
-    required: [true, 'This field is required'],
+    unique: true,
+    trim: true,
+    required: [true, 'Email is required'],
   },
   contactNo: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Contact number is required'],
   },
   emergencyContactNo: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Emergency contact number is required'],
   },
   bloodGroup: {
     type: String,
     enum: {
       values: ["A+", "B+", "O+", "AB+", "A-", "B-", "AB-", "O-"],
-      message: '{VALUE} is not valid'
+      message: '{VALUE} is not a valid blood group',
     },
+    trim: true,
   },
   presentAddress: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Present address is required'],
   },
   permanentAddress: {
     type: String,
-    required: [true, 'This field is required'],
+    trim: true,
+    required: [true, 'Permanent address is required'],
   },
   guardian: {
     type: guardianSchema,
-    required: true,
+    required: [true, 'Guardian information is required'],
   },
   localGuardian: {
     type: localGuardianSchema,
-    required: true,
+    required: [true, 'Local guardian information is required'],
   },
-  profileImg: { type: String },
+  profileImg: {
+    type: String,
+    trim: true,
+  },
   isActive: {
     type: String,
-    enum: ["active", "blocked"],
+    enum: {
+      values: ["active", "blocked"],
+      message: '{VALUE} is not a valid status',
+    },
     default: 'active',
   },
 });
