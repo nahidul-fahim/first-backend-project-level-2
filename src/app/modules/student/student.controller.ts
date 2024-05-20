@@ -9,10 +9,13 @@ const createStudent = async (req: Request, res: Response) => {
     // getting the data from client side by body
     const { student: studentData } = req.body;
 
-    const { error } = studentValidationSchema.validate(studentData);
+    // data validation using Joi
+    const { error, value } = studentValidationSchema.validate(studentData);
 
-    // console.log({ error }, { value });
+    // then we will call the service function to send these data
+    const result = await StudentServices.createStudentIntoDB(value);
 
+    // error from Joi library
     if (error) {
       res.status(500).json({
         success: false,
@@ -20,9 +23,6 @@ const createStudent = async (req: Request, res: Response) => {
         error: error,
       })
     }
-
-    // then we will call the service function to send these data
-    const result = await StudentServices.createStudentIntoDB(studentData);
 
     // now send the response to client side
     res.status(200).json({
