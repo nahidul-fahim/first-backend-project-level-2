@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { StudentServices } from "./student.service";
+// import studentValidationSchema from "./student.validation";
+import { z } from "zod";
 import studentValidationSchema from "./student.validation";
 
 // student creation controller
@@ -9,20 +11,25 @@ const createStudent = async (req: Request, res: Response) => {
     // getting the data from client side by body
     const { student: studentData } = req.body;
 
+
+    // data validation using zod
+    const zodParseData = studentValidationSchema.parse(studentData)
+
+
     // data validation using Joi
-    const { error, value } = studentValidationSchema.validate(studentData);
+    // const { error, value } = studentValidationSchema.validate(studentData);
 
     // then we will call the service function to send these data
-    const result = await StudentServices.createStudentIntoDB(value);
+    const result = await StudentServices.createStudentIntoDB(zodParseData);
 
     // error from Joi library
-    if (error) {
-      res.status(500).json({
-        success: false,
-        message: "Something went wrong",
-        error: error,
-      })
-    }
+    // if (error) {
+    //   res.status(500).json({
+    //     success: false,
+    //     message: "Something went wrong",
+    //     error: error,
+    //   })
+    // }
 
     // now send the response to client side
     res.status(200).json({

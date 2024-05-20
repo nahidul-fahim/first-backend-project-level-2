@@ -11,7 +11,7 @@ export type Guardian = {
 // user name type
 export type UserName = {
   firstName: string;
-  middleName: string;
+  middleName?: string;
   lastName: string;
 };
 
@@ -32,7 +32,7 @@ export type Student = {
   email: string;
   contactNo: string;
   emergencyContactNo: string;
-  bloodGroup: "A+" | "B+" | "O+" | "AB+" | "A-" | "B-" | "AB-" | "O-";
+  bloodGroup?: "A+" | "B+" | "O+" | "AB+" | "A-" | "B-" | "AB-" | "O-";
   presentAddress: string;
   permanentAddress: string;
   guardian: Guardian;
