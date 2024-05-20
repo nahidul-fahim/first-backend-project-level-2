@@ -1,14 +1,16 @@
 import { Schema, model } from "mongoose";
 import {
-  Guardian,
-  LocalGuardian,
-  Student,
-  UserName,
+  TGuardian,
+  TLocalGuardian,
+  TStudent,
+  StudentMethods,
+  StudentModel,
+  TUserName,
 } from "./student.interface";
 import validator from "validator";
 
 // userName schema
-const userNameSchema = new Schema<UserName>({
+const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     trim: true, // this will remove unnecessary space from beginning and ending of name
@@ -39,7 +41,7 @@ const userNameSchema = new Schema<UserName>({
 });
 
 // guardian schema
-const guardianSchema = new Schema<Guardian>({
+const guardianSchema = new Schema<TGuardian>({
   fatherName: {
     type: String,
     trim: true,
@@ -73,7 +75,7 @@ const guardianSchema = new Schema<Guardian>({
 });
 
 // local guardian schema
-const localGuardianSchema = new Schema<LocalGuardian>({
+const localGuardianSchema = new Schema<TLocalGuardian>({
   name: {
     type: String,
     trim: true,
@@ -97,7 +99,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 });
 
 // student schema
-const studentSchema = new Schema<Student>({
+const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
   id: {
     type: String,
     unique: true,
@@ -180,5 +182,11 @@ const studentSchema = new Schema<Student>({
   },
 });
 
+studentSchema.methods.isUserExists = async function (id: string) {
+  const existingUser = await Student.findOne({ id });
+
+  return existingUser;
+}
+
 // creating model
-export const StudentModel = model<Student>("Student", studentSchema);
+export const Student = model<TStudent, StudentModel>("Student", studentSchema);
