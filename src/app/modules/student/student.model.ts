@@ -3,11 +3,13 @@ import {
   TGuardian,
   TLocalGuardian,
   TStudent,
-  StudentMethods,
+  // StudentMethods,
   StudentModel,
   TUserName,
 } from "./student.interface";
 import validator from "validator";
+import bcrypt from 'bcrypt';
+import config from "../../config";
 
 // userName schema
 const userNameSchema = new Schema<TUserName>({
@@ -99,12 +101,20 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 // student schema
-const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
+// const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({ // this is for custom instance method
+const studentSchema = new Schema<TStudent, StudentModel>({ // this is for custom static method
   id: {
     type: String,
     unique: true,
     trim: true,
     required: [true, 'Student ID is required'],
+  },
+  password: {
+    type: String,
+    maxlength: 20,
+    unique: true,
+    trim: true,
+    required: [true, 'Password is required'],
   },
   name: {
     type: userNameSchema,
@@ -182,11 +192,37 @@ const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
   },
 });
 
-studentSchema.methods.isUserExists = async function (id: string) {
-  const existingUser = await Student.findOne({ id });
 
+// pre save middleware / pre save hook
+studentSchema.pre('save', async function (next) {
+  const userData = this;
+
+  // hashing password and save to database
+  userData.password = await bcrypt.hash(userData.password, Number(config.bcrypt_salt),)
+
+  next();
+})
+
+
+
+
+
+
+// creating a custom static method
+studentSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await Student.findOne({ id });
   return existingUser;
 }
+
+
+
+
+
+// creating a custom instance method
+// studentSchema.methods.isUserExists = async function (id: string) {
+//   const existingUser = await Student.findOne({ id });
+//   return existingUser;
+// }
 
 // creating model
 export const Student = model<TStudent, StudentModel>("Student", studentSchema);
